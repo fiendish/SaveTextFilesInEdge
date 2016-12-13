@@ -1,0 +1,23 @@
+{
+  "manifest_version": 2,
+
+  "name": "Save Text Files (sigh)",
+  "version": "1.0.0",
+
+  "description": "Adds a context menu option in Microsoft Edge to save a loaded text file because Microsoft thinks you never need to do that.",
+  "author": "Avi 'fiendish' Kelman",
+
+  "permissions": [ "<any url>", "activeTab", "tabs", "contextMenus", "background" ],
+
+  "background": {
+    "scripts": [ "background-script.js" ],
+    "persistent": true
+  },
+
+  "content_scripts": [
+    {
+      "matches": [ "<all_urls>" ],
+      "js": [ "content-script.js" ]
+    }
+  ]
+}
