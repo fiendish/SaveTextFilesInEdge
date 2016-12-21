@@ -32,12 +32,14 @@ function fileNameFromHREF(name) {
 }
 
 function saveData(data, dataType, fileName) {
+    data = data.replace(/([^\r])\n/g, "$1\r\n");
     var blob = new Blob([data], { type: dataType });
     navigator.msSaveOrOpenBlob(blob, fileName);
 }
 
 function saveBodyText() {
-    saveData(document.body.textContent, "text/plain", fileNameFromHREF(document.location.href));
+    var data = document.body.textContent;
+    saveData(data, "text/plain", fileNameFromHREF(document.location.href));
 }
 
 browser.runtime.onMessage.addListener(function (msg) {
