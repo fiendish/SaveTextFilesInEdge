@@ -24,30 +24,24 @@ function fileNameFromHREF(name) {
     name = name.substring(0, (name.indexOf("#") == -1) ? name.length : name.indexOf("#"));
     name = name.substring(0, (name.indexOf("?") == -1) ? name.length : name.indexOf("?"));
     name = name.substring(name.lastIndexOf("/") + 1, name.length);
+    name = decodeURIComponent(escape(name)); // decode utf8
     if (name.length == 0) {
         name = "untitled.txt";
     }
     return name;
 }
 
-var url, prev_url, bodytextBlob;
-var a = document.createElement("a");
-a.style = "display: none";
-a.download = fileNameFromHREF(document.location.href);
-document.body.appendChild(a);
-
-function saveData(data, dataType) {
+function saveData(data, dataType, fileName) {
     var blob = new Blob([data], { type: dataType });
-    prev_url = url;
-    url = window.URL.createObjectURL(blob);
-    a.href = url;
-    a.click();
+    navigator.msSaveOrOpenBlob(blob, fileName);
+}
 
-    // We can't revoke the current object right away, because Edge would destroy it before the click triggers the save.
-    // So just make sure we only ever leave one hanging around.
-    if (prev_url) { window.URL.revokeObjectURL(prev_url); }
-};
+function saveBodyText() {
+    saveData(document.body.textContent, "text/plain", fileNameFromHREF(document.location.href));
+}
 
 browser.runtime.onMessage.addListener(function (msg) {
-    saveData(document.body.textContent, "text/plain");
+    if (msg == "saveText") {
+        saveBodyText();
+    }
 });
